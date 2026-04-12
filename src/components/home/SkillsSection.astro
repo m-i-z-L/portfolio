@@ -1,0 +1,72 @@
+---
+import { skills, CATEGORY_LABELS, CATEGORY_ORDER, type SkillLevel } from '../../data/skills';
+
+// カテゴリ別にグループ化し、featuredを先頭に、同レベル内はアルファベット順に並べる
+const LEVEL_RANK: Record<SkillLevel, number> = { expert: 0, proficient: 1, familiar: 2 };
+
+const skillsByCategory = CATEGORY_ORDER.map(category => ({
+  category,
+  label: CATEGORY_LABELS[category],
+  items: skills
+    .filter(s => s.category === category)
+    .sort((a, b) => {
+      if (a.featured !== b.featured) return a.featured ? -1 : 1;
+      if (LEVEL_RANK[a.level] !== LEVEL_RANK[b.level]) return LEVEL_RANK[a.level] - LEVEL_RANK[b.level];
+      return a.name.localeCompare(b.name);
+    }),
+})).filter(group => group.items.length > 0);
+
+const levelBadgeClass: Record<SkillLevel, string> = {
+  expert: 'bg-blue-100 text-blue-800',
+  proficient: 'bg-green-100 text-green-800',
+  familiar: 'bg-gray-100 text-gray-700',
+};
+---
+
+<section class="py-16 px-4 bg-gray-50" aria-labelledby="skills-heading">
+  <div class="max-w-4xl mx-auto">
+    <h2
+      id="skills-heading"
+      class="text-3xl font-semibold text-gray-800 mb-10 text-center"
+    >
+      Skills &amp; Technologies
+    </h2>
+
+    <div class="flex flex-col gap-8">
+      {skillsByCategory.map(group => (
+        <div>
+          <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-3">
+            {group.label}
+          </h3>
+          <ul class="flex flex-wrap gap-2" aria-label={`${group.label} スキル一覧`}>
+            {group.items.map(skill => (
+              <li class="flex items-center gap-1.5 bg-white rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-800">
+                {skill.name}
+                <span class={`text-xs px-1.5 py-0.5 rounded font-medium ${levelBadgeClass[skill.level]}`}>
+                  {skill.level}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+
+    <!-- 凡例 -->
+    <div class="mt-10 flex flex-wrap items-center gap-4 justify-center text-xs text-gray-500">
+      <span>習熟度:</span>
+      <span class="flex items-center gap-1">
+        <span class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-medium">expert</span>
+        実務で深く使用・チームへの技術指導が可能
+      </span>
+      <span class="flex items-center gap-1">
+        <span class="bg-green-100 text-green-800 px-1.5 py-0.5 rounded font-medium">proficient</span>
+        実務で継続的に使用・一人で完結できる
+      </span>
+      <span class="flex items-center gap-1">
+        <span class="bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded font-medium">familiar</span>
+        実務経験あり・補助的に使用
+      </span>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,75 @@
+---
+import { career } from '../../data/career';
+
+// "YYYY-MM" → "YYYY年M月" に変換する
+function formatDate(ym: string): string {
+  const [year, month] = ym.split('-');
+  return `${year}年${parseInt(month, 10)}月`;
+}
+
+// 新しい順（startDate 降順）でソートする
+const sortedCareer = [...career].sort((a, b) => b.startDate.localeCompare(a.startDate));
+---
+
+<section class="py-16 px-4 bg-white" aria-labelledby="career-heading">
+  <div class="max-w-4xl mx-auto">
+    <h2
+      id="career-heading"
+      class="text-3xl font-semibold text-gray-800 mb-12 text-center"
+    >
+      Career History
+    </h2>
+
+    <ol class="relative border-l-2 border-gray-200 ml-4 flex flex-col gap-10">
+      {sortedCareer.map(entry => (
+        <li class="pl-8 relative">
+          {/* タイムラインドット */}
+          <span
+            class="absolute -left-[11px] top-1 w-5 h-5 rounded-full bg-primary border-2 border-white shadow"
+            aria-hidden="true"
+          />
+
+          {/* カードヘッダー */}
+          <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 mb-2">
+            <h3 class="text-lg font-semibold text-gray-800">
+              {entry.company}
+            </h3>
+            <p class="text-sm text-gray-500 shrink-0">
+              <time datetime={entry.startDate}>{formatDate(entry.startDate)}</time>
+              {' – '}
+              {entry.endDate
+                ? <time datetime={entry.endDate}>{formatDate(entry.endDate)}</time>
+                : <span>現在</span>
+              }
+            </p>
+          </div>
+
+          {/* 役職 */}
+          <p class="text-sm font-medium text-primary mb-2">{entry.role}</p>
+
+          {/* 担当業務の概要 */}
+          <p class="text-sm text-gray-600 leading-relaxed mb-4">{entry.description}</p>
+
+          {/* 主な実績 */}
+          <ul class="flex flex-col gap-1.5 mb-4" aria-label="主な実績">
+            {entry.achievements.map(achievement => (
+              <li class="flex items-start gap-2 text-sm text-gray-700">
+                <span class="mt-1 shrink-0 w-1.5 h-1.5 rounded-full bg-primary" aria-hidden="true" />
+                {achievement}
+              </li>
+            ))}
+          </ul>
+
+          {/* 使用技術タグ */}
+          <ul class="flex flex-wrap gap-1.5" aria-label="使用技術">
+            {entry.technologies.map(tech => (
+              <li class="text-xs bg-blue-50 text-blue-700 border border-blue-100 rounded px-2 py-0.5 font-medium">
+                {tech}
+              </li>
+            ))}
+          </ul>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>

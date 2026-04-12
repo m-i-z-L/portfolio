@@ -1,0 +1,28 @@
+---
+const navItems = [
+  { label: 'Home', href: '/' },
+  { label: 'Blog', href: '/blog' },
+];
+---
+
+<header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-100">
+  <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+    <a href="/" class="text-lg font-bold text-primary hover:opacity-80 transition-opacity">
+      Portfolio
+    </a>
+    <nav aria-label="メインナビゲーション">
+      <ul class="flex gap-6">
+        {navItems.map(item => (
+          <li>
+            <a
+              href={item.href}
+              class="text-sm text-gray-600 hover:text-primary transition-colors"
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>
