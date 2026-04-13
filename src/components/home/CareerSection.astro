@@ -21,8 +21,8 @@ const sortedCareer = [...career].sort((a, b) => b.startDate.localeCompare(a.star
     </h2>
 
     <ol class="relative border-l-2 border-gray-200 ml-4 flex flex-col gap-10">
-      {sortedCareer.map(entry => (
-        <li class="pl-8 relative">
+      {sortedCareer.map((entry, i) => (
+        <li class="pl-8 relative animate-on-scroll" data-delay={i * 100}>
           {/* タイムラインドット */}
           <span
             class="absolute -left-[11px] top-1 w-5 h-5 rounded-full bg-primary border-2 border-white shadow"

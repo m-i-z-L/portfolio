@@ -27,7 +27,7 @@ const levelBadgeClass: Record<SkillLevel, string> = {
   <div class="max-w-4xl mx-auto">
     <h2
       id="skills-heading"
-      class="text-3xl font-semibold text-gray-800 mb-10 text-center"
+      class="text-3xl font-semibold text-gray-800 mb-10 text-center animate-on-scroll"
     >
       Skills &amp; Technologies
     </h2>
@@ -35,12 +35,15 @@ const levelBadgeClass: Record<SkillLevel, string> = {
     <div class="flex flex-col gap-8">
       {skillsByCategory.map(group => (
         <div>
-          <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-3">
+          <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-3 animate-on-scroll">
             {group.label}
           </h3>
           <ul class="flex flex-wrap gap-2" aria-label={`${group.label} スキル一覧`}>
-            {group.items.map(skill => (
-              <li class="flex items-center gap-1.5 bg-white rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-800">
+            {group.items.map((skill, i) => (
+              <li
+                class="flex items-center gap-1.5 bg-white rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-800 animate-on-scroll hover:scale-105 hover:shadow-sm transition-transform cursor-default"
+                data-delay={i * 40}
+              >
                 {skill.name}
                 <span class={`text-xs px-1.5 py-0.5 rounded font-medium ${levelBadgeClass[skill.level]}`}>
                   {skill.level}

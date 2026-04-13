@@ -18,31 +18,31 @@ const socialLinks = [
 >
   <div class="max-w-2xl mx-auto text-center">
     <!-- 名前 -->
-    <h1 class="text-5xl font-bold text-gray-800 mb-3 tracking-tight">
+    <h1 class="text-5xl font-bold text-gray-800 mb-3 tracking-tight animate-fade-up">
       Your Name
     </h1>
 
     <!-- 職種 -->
-    <p class="text-xl font-medium text-primary mb-6">
+    <p class="text-xl font-medium text-primary mb-6 animate-fade-up [animation-delay:150ms]">
       Backend Engineer
     </p>
 
     <!-- 自己紹介文 -->
-    <p class="text-base text-gray-600 leading-relaxed mb-10 max-w-lg mx-auto">
+    <p class="text-base text-gray-600 leading-relaxed mb-10 max-w-lg mx-auto animate-fade-up [animation-delay:300ms]">
       Go・Python を主軸にバックエンド開発7年。<br />
       スケーラブルなAPIとデータ基盤の設計・実装が得意です。<br />
       技術的な知見をブログで発信しています。
     </p>
 
     <!-- SNSリンク -->
-    <div class="flex items-center justify-center gap-4">
+    <div class="flex items-center justify-center gap-4 animate-fade-up [animation-delay:450ms]">
       {socialLinks.map(link => (
         <a
           href={link.href}
           target="_blank"
           rel="noopener noreferrer"
           aria-label={link.label}
-          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-gray-200 text-gray-700 hover:border-primary hover:text-primary transition-colors text-sm font-medium"
+          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-gray-200 text-gray-700 hover:border-primary hover:text-primary hover:-translate-y-0.5 hover:shadow-md transition-all text-sm font-medium"
         >
           <Fragment set:html={link.icon} />
           {link.label}

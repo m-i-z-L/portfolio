@@ -1,13 +1,14 @@
 ---
+const base = import.meta.env.BASE_URL;
 const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'Blog', href: '/blog' },
+  { label: 'Home', href: base },
+  { label: 'Blog', href: `${base}blog` },
 ];
 ---
 
 <header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-100">
   <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-    <a href="/" class="text-lg font-bold text-primary hover:opacity-80 transition-opacity">
+    <a href={base} class="text-lg font-bold text-primary hover:opacity-80 transition-opacity">
       Portfolio
     </a>
     <nav aria-label="メインナビゲーション">
