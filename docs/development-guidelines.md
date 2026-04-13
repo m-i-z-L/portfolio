@@ -54,14 +54,13 @@ Prettierによる自動フォーマットを適用。手動調整は原則不要
 
 ```typescript
 // ✅ 良い例: なぜそうするかを説明
-// 記事をdraft除外してから日付降順にソートする
-const publishedArticles = articles
-  .filter(a => !a.data.draft)
-  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
+// 公開日降順にソートして最新記事を先頭に表示する
+const sortedArticles = articles
+  .sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime());
 
 // ❌ 悪い例: コードを日本語で説明するだけ
-// 記事をフィルタリングしてソートする
-const publishedArticles = articles.filter(a => !a.data.draft).sort(...);
+// 記事をソートする
+const sortedArticles = articles.sort(...);
 ```
 
 ### Astro固有の規約
@@ -71,21 +70,21 @@ const publishedArticles = articles.filter(a => !a.data.draft).sort(...);
 // ✅ Frontmatter: import → props定義 → データ取得の順
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ArticleCard from '../components/blog/ArticleCard.astro';
-import { getCollection } from 'astro:content';
+import { fetchZennArticles } from '../utils/zenn';
 
 interface Props {
   tag?: string;
 }
 
 const { tag } = Astro.props;
-const articles = await getCollection('articles', ({ data }) =>
-  !data.draft && (tag ? data.tags.includes(tag) : true)
-);
+// Zenn RSS をビルド時に取得し、タグで絞り込む
+const articles = await fetchZennArticles();
+const filtered = tag ? articles.filter(a => a.tags.includes(tag)) : articles;
 ---
 
 <!-- ✅ テンプレート: セマンティックHTMLを使う -->
 <section aria-label="記事一覧">
-  {articles.map(article => (
+  {filtered.map(article => (
     <ArticleCard article={article} />
   ))}
 </section>
@@ -101,18 +100,15 @@ const articles = await getCollection('articles', ({ data }) =>
 main (本番環境 = GitHub Pages)
 └── feature/[機能名]   # 新機能・ページ追加
 └── fix/[修正内容]     # バグ修正・誤字修正
-└── content/[記事名]   # 記事追加・更新
 └── chore/[作業内容]   # 依存更新・設定変更
 ```
 
 **運用ルール**:
 - `main` は常にビルドが通る状態を保つ
 - 作業はブランチを切って実施し、完了後に `main` へマージ
-- 小規模な記事の誤字修正などは `main` への直接コミットも許容
 
 **マージ方針**:
 - `feature/` `fix/` `chore/` → `main`: squash merge（コミット履歴を1つにまとめる）
-- `content/` → `main`: merge commit（記事の変更履歴を保持する）
 - マージ後はブランチを削除する
 
 ### コミットメッセージ規約
@@ -125,7 +121,6 @@ Conventional Commits に従う。
 
 **Type一覧**:
 - `feat`: 新ページ・新機能の追加
-- `content`: 記事の追加・更新
 - `fix`: バグ修正
 - `style`: デザイン・スタイル変更
 - `refactor`: リファクタリング
@@ -134,8 +129,7 @@ Conventional Commits に従う。
 
 **例**:
 ```
-feat(blog): タグフィルター機能を追加
-content(articles): Go並行処理パターンの記事を追加
+feat(blog): Zenn RSS連携によるブログ一覧ページを追加
 fix(hero): モバイルでレイアウトが崩れる問題を修正
 style(career): タイムラインのデザインを調整
 chore(deps): Astroを4.5.0にアップデート
@@ -199,57 +193,17 @@ npm run dev
 
 ## 記事執筆ガイドライン
 
-### 記事ファイルの作成
+技術記事は **Zenn** で執筆・公開する。ポートフォリオサイトへの反映はビルドによって自動で行われる。
 
-```bash
-# src/content/articles/ に Markdown ファイルを作成
-touch src/content/articles/my-new-article.md
-```
+### 記事公開フロー
 
-### フロントマターの書き方
+1. Zenn で記事を執筆・公開する
+2. GitHub Actions を手動トリガー（または次回 `main` push 時）でビルドを実行する
+3. ビルド時に Zenn RSS フィードを取得し、記事一覧ページが自動更新される
 
-```markdown
----
-title: "記事タイトル (1〜80文字)"
-description: "記事の概要文。SNSシェア時にも使われる。(50〜160文字)"
-publishedAt: 2026-04-12
-tags: ["Go", "バックエンド"]
-draft: false
----
+### タグ運用
 
-## はじめに
-
-本文をここに書く...
-```
-
-**チェックリスト**:
-- [ ] `title` は80文字以内
-- [ ] `description` は50〜160文字
-- [ ] `publishedAt` は `YYYY-MM-DD` 形式
-- [ ] `tags` は既存タグと統一 (新規タグは glossary.md に追記)
-- [ ] 公開前に `draft: false` に変更
-
-### Markdown記述規則
-
-```markdown
-# h1 は記事タイトル (フロントマターで設定するため本文では使わない)
-
-## h2 が最上位の見出し
-
-### h3 でサブセクション
-
-コードブロックには言語を指定する:
-```go
-package main
-
-func main() {
-    println("Hello, World!")
-}
-```
-
-画像は public/images/ または src/assets/images/ を参照:
-![説明文](../../assets/images/screenshot.png)
-```
+Zenn 側でのタグ設定が RSS に反映される。一貫性のあるタグ名を使用すること（`glossary.md` のタグ一覧を参照）。
 
 ## CI/CDパイプライン
 
@@ -316,12 +270,6 @@ jobs:
 - [ ] モバイルレスポンシブを確認した
 - [ ] アクセシビリティ (ARIA属性・セマンティックHTML) を確認した
 - [ ] Tailwindクラスが整理されている (可読性を優先)
-
-### 記事
-- [ ] フロントマターが正しく記述されている
-- [ ] `npm run check` がパスする
-- [ ] `draft: false` に設定している (公開時)
-- [ ] コードブロックに言語指定がある
 
 ### デプロイ前
 - [ ] `npm run build` が成功する

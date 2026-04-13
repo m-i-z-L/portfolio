@@ -50,9 +50,9 @@
 ```
 
 #### コンテンツレイヤー
-- **責務**: 記事・スキル・経歴・プロジェクトデータの管理
-- **形式**: Markdown (記事) + TypeScript (構造化データ)
-- **更新方法**: ファイルを編集してGitにpush
+- **責務**: スキル・経歴・プロジェクトデータの管理、および Zenn 記事のビルド時取得
+- **形式**: TypeScript (構造化データ) + Zenn RSS フィード (記事)
+- **更新方法**: TypeScript ファイルを編集して Git に push（構造化データ）／ Zenn に記事を公開してビルドを実行（記事）
 
 #### ビルドレイヤー
 - **責務**: コンテンツを静的HTMLに変換
@@ -85,7 +85,7 @@ mainブランチへのpush
 
 | データ種別 | 管理方法 | 形式 | 理由 |
 |-----------|---------|------|------|
-| 技術記事 | Markdownファイル | `.md` + フロントマター | Gitで差分管理・エディタで執筆可能 |
+| 技術記事 | Zenn RSS フィード (ビルド時 fetch) | `https://zenn.dev/{username}/feed` | Zennで記事管理・手動管理不要・ビルド時に最新を取得 |
 | スキル一覧 | TypeScriptファイル | `src/data/skills.ts` | 型安全・ビルド時にバリデーション |
 | 職務経歴 | TypeScriptファイル | `src/data/career.ts` | 型安全・ビルド時にバリデーション |
 | 制作物 | TypeScriptファイル | `src/data/projects.ts` | 型安全・ビルド時にバリデーション |
@@ -161,7 +161,7 @@ mainブランチへのpush
 ### ビルドチェック (CI必須)
 - **型チェック**: `astro check` でTypeScriptの型エラーを検出
 - **Lint**: ESLintで構文・コーディング規約を検証
-- **ビルド成功確認**: `astro build` が正常終了することを確認
+- **ビルド成功確認**: `astro build` が正常終了することを確認（Zenn RSS fetch を含む）
 
 ### パフォーマンステスト (CI必須)
 - **ツール**: Lighthouse CI (`@lhci/cli`)

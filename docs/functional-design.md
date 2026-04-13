@@ -28,33 +28,29 @@ graph TB
 |------|------|----------|
 | 静的サイトジェネレーター | Astro | コンポーネント指向・Markdown対応・高パフォーマンス |
 | スタイリング | Tailwind CSS | ユーティリティファーストで高速なUI開発 |
-| コンテンツ管理 | Markdownファイル | Gitで管理・Pushで更新・エディタ不要 |
+| コンテンツ管理 | Zenn RSS フィード (ビルド時取得) | 記事は Zenn で管理・ビルド時に自動取得 |
 | ホスティング | GitHub Pages | 無料・カスタムドメイン対応 |
 | CI/CD | GitHub Actions | Push時に自動ビルド・デプロイ |
 | シンタックスハイライト | Shiki (Astro組込) | 多言語対応・ゼロJS |
 
 ## データモデル定義
 
-### エンティティ: Article (技術記事)
+### エンティティ: ZennArticle (技術記事)
 
 ```typescript
-interface Article {
-  // slug はフロントマターに定義しない。ファイル名 (拡張子を除く) から Astro が自動生成する
-  // 例: go-concurrency-tips.md → slug: "go-concurrency-tips"
-  title: string;          // 記事タイトル (1-100文字)
-  description: string;    // 記事の概要 (1-200文字)
-  publishedAt: Date;      // 公開日
-  updatedAt?: Date;       // 最終更新日
-  tags: string[];         // タグ一覧 (例: ["Go", "バックエンド"])
-  draft: boolean;         // trueの場合は非公開
-  body: string;           // 本文 (Markdown)
+interface ZennArticle {
+  title: string;       // 記事タイトル
+  url: string;         // Zenn の記事 URL (例: "https://zenn.dev/username/articles/slug")
+  publishedAt: Date;   // 公開日
+  tags: string[];      // タグ一覧 (Zenn の RSS categories から取得)
+  description?: string; // 記事概要 (RSS の description から取得)
 }
 ```
 
 **制約**:
-- `slug` はファイル名から自動導出。ファイル名は英数字・ハイフンのみ使用すること
-- `tags` は1〜10件
-- `draft: true` の記事はビルド時に除外される
+- データはビルド時に `https://zenn.dev/{username}/feed` から取得する
+- 記事本文はポートフォリオサイト内には持たない。各記事カードから Zenn へ外部リンクする
+- `tags` は Zenn の RSS フィード内 `<category>` 要素から自動取得
 
 ---
 
@@ -96,8 +92,28 @@ interface CareerHistory {
   description: string;    // 担当業務の概要
   achievements: string[]; // 主な実績・成果
   technologies: string[]; // 使用技術
+  projects?: CareerProject[]; // 参画プロジェクト一覧 (省略可)
 }
 ```
+
+---
+
+### エンティティ: CareerProject (参画プロジェクト)
+
+```typescript
+interface CareerProject {
+  name: string;            // プロジェクト名
+  description: string;     // プロジェクト概要 (1-200文字)
+  role: string;            // 担当役割 (例: "バックエンドリード")
+  teamSize?: number;       // チーム規模 (人数、省略可)
+  technologies?: string[]; // プロジェクト固有の使用技術 (省略可)
+  achievements?: string[]; // プロジェクト単位の成果・実績 (省略可)
+}
+```
+
+**制約**:
+- `CareerHistory.projects` は省略可能。未設定の職歴エントリは従来通りの表示を維持する
+- `name`, `description`, `role` は必須フィールド
 
 ---
 
@@ -120,28 +136,23 @@ interface Project {
 
 ```
 src/
-├── content/
-│   ├── articles/           # 技術記事 (Markdown)
-│   │   ├── go-tips.md
-│   │   └── postgres-index.md
-│   └── config.ts           # コンテンツコレクション定義
 ├── data/
 │   ├── skills.ts           # スキル一覧データ
 │   ├── career.ts           # 職務経歴データ
 │   └── projects.ts         # 制作物データ
+├── pages/
+│   └── blog/
+│       ├── index.astro     # ビルド時に Zenn RSS を fetch して記事一覧を生成
+│       └── tags/
+│           └── [tag].astro # タグ別記事一覧 (getStaticPaths で RSS タグから生成)
 ```
 
-**記事Markdownのフロントマター例**:
-```markdown
----
-title: "GoのgoroutineとChannelを使った並行処理パターン"
-description: "実務で役立つGoの並行処理パターンを具体例とともに解説します"
-publishedAt: 2026-04-01
-tags: ["Go", "バックエンド", "並行処理"]
-draft: false
----
-
-本文をここに書く...
+**Zenn RSS フィードの取得例** (ページ Frontmatter 内):
+```typescript
+const RSS_URL = 'https://zenn.dev/{username}/feed';
+const response = await fetch(RSS_URL);
+const xml = await response.text();
+// XML をパースして ZennArticle[] に変換
 ```
 
 ## コンポーネント設計
@@ -151,8 +162,7 @@ draft: false
 | ページ | パス | 説明 |
 |--------|------|------|
 | トップページ | `/` | ヒーロー・スキル・経歴・プロジェクト・コンタクトを1ページに集約 |
-| ブログ一覧 | `/blog` | 記事一覧（タグフィルタ付き） |
-| 記事詳細 | `/blog/[slug]` | 個別記事ページ |
+| ブログ一覧 | `/blog` | Zenn RSS から取得した記事一覧（タグフィルタ付き） |
 | タグ別一覧 | `/blog/tags/[tag]` | タグでフィルタリングされた記事一覧 |
 
 ---
@@ -176,15 +186,10 @@ graph TB
     ArticleCard[ArticleCard]
     TagFilter[TagFilter]
 
-    ArticlePage[ArticlePage]
-    ArticleContent[ArticleContent]
-    TagBadge[TagBadge]
-
     Layout --> Header
     Layout --> Footer
     Layout --> TopPage
     Layout --> BlogListPage
-    Layout --> ArticlePage
 
     TopPage --> HeroSection
     TopPage --> SkillsSection
@@ -194,9 +199,6 @@ graph TB
 
     BlogListPage --> ArticleCard
     BlogListPage --> TagFilter
-
-    ArticlePage --> ArticleContent
-    ArticlePage --> TagBadge
 ```
 
 ---
@@ -257,7 +259,7 @@ graph TB
 
 **表示項目**:
 - タイトル・投稿日・タグ一覧・概要文
-- 記事詳細ページへのリンク
+- Zenn の記事ページへの外部リンク（`target="_blank" rel="noopener noreferrer"`）
 
 ---
 
@@ -268,7 +270,7 @@ graph TB
 
 **実装方式**: URLベースの静的ページ生成
 - タグクリック → `/blog/tags/[tag]` へ遷移（JavaScript不要）
-- Astroの `getStaticPaths()` で全タグ分のページを事前生成
+- Astroの `getStaticPaths()` でビルド時に Zenn RSS から全タグを取得し、タグ分のページを事前生成
 - クライアントサイドJSを使わないため、ゼロJSポリシーを維持できる
 
 **表示仕様**:
@@ -276,34 +278,16 @@ graph TB
 - 現在選択中のタグをハイライト
 - 「すべて表示」リンクで `/blog` に戻る
 
----
-
-### ArticleContent
-
-**責務**:
-- Markdownで書かれた記事本文をHTMLとしてレンダリング
-- コードブロックにシンタックスハイライトを適用
-
-**仕様**:
-- 見出し (h2/h3) に自動でアンカーリンクを付与
-- コードブロックにコピーボタンを設置（後述のJS使用について参照）
-
-**コピーボタンのJS使用について**:
-コピーボタンはクライアントサイドJSが必要なため、Astroの Islands Architecture (`client:load` ディレクティブ) を使用する。コピーボタンのコンポーネントのみJSを読み込み、それ以外の記事本文はJSゼロで描画する。これはゼロJS原則の例外として明示的に許容する。
-
 ## 画面遷移図
 
 ```mermaid
 stateDiagram-v2
     [*] --> トップページ: サイト訪問
     トップページ --> ブログ一覧: "ブログ"リンククリック
-    トップページ --> 記事詳細: 最新記事リンククリック
-    ブログ一覧 --> 記事詳細: 記事カードクリック
+    ブログ一覧 --> Zenn記事: 記事カードクリック（外部遷移）
     ブログ一覧 --> タグ別一覧: タグクリック
-    タグ別一覧 --> 記事詳細: 記事カードクリック
+    タグ別一覧 --> Zenn記事: 記事カードクリック（外部遷移）
     タグ別一覧 --> ブログ一覧: タグクリア
-    記事詳細 --> ブログ一覧: "一覧に戻る"クリック
-    記事詳細 --> 記事詳細: 関連記事クリック
 ```
 
 ## ビルド・デプロイフロー
@@ -396,7 +380,6 @@ sequenceDiagram
 
 - **画像最適化**: Astro の `<Image>` コンポーネントで WebP 変換・サイズ最適化
 - **ゼロ JS (原則)**: インタラクションのないページはJSを一切出力しない
-- **JS使用の例外**: コードブロックのコピーボタンのみ `client:load` で Island として実装する
 - **フォント最適化**: Google Fontsは`font-display: swap`でCLS抑制
 - **CSS最小化**: Tailwindのpurgeで未使用CSSを除去
 

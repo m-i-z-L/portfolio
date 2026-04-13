@@ -8,7 +8,6 @@ portfolio/
 │   ├── pages/                  # ページコンポーネント (ルーティング)
 │   ├── layouts/                # ページレイアウト
 │   ├── components/             # 再利用可能なUIコンポーネント
-│   ├── content/                # コンテンツコレクション (Markdown記事)
 │   ├── data/                   # 構造化データ (スキル・経歴・制作物)
 │   └── assets/                 # Astroが最適化する画像 (WebP変換対象)
 ├── public/                     # 静的アセット (そのまま配信・最適化なし)
@@ -29,9 +28,8 @@ portfolio/
 
 **配置ファイル**:
 - `index.astro`: トップページ (`/`)
-- `blog/index.astro`: ブログ一覧ページ (`/blog`)
-- `blog/[slug].astro`: 記事詳細ページ (`/blog/[slug]`)
-- `blog/tags/[tag].astro`: タグ別記事一覧 (`/blog/tags/[tag]`)
+- `blog/index.astro`: ブログ一覧ページ (`/blog`)。Frontmatter 内で Zenn RSS を fetch して記事一覧を生成する
+- `blog/tags/[tag].astro`: タグ別記事一覧 (`/blog/tags/[tag]`)。`getStaticPaths()` で Zenn RSS タグから全ページを事前生成する
 - `404.astro`: カスタム404ページ
 
 **命名規則**:
@@ -44,7 +42,6 @@ src/pages/
 ├── index.astro
 ├── blog/
 │   ├── index.astro
-│   ├── [slug].astro
 │   └── tags/
 │       └── [tag].astro
 └── 404.astro
@@ -58,7 +55,6 @@ src/pages/
 
 **配置ファイル**:
 - `BaseLayout.astro`: 全ページ共通のHTMLシェル
-- `ArticleLayout.astro`: 記事詳細ページ専用レイアウト
 
 **命名規則**: PascalCase + `Layout.astro`
 
@@ -69,8 +65,7 @@ src/pages/
 **例**:
 ```
 src/layouts/
-├── BaseLayout.astro
-└── ArticleLayout.astro
+└── BaseLayout.astro
 ```
 
 ---
@@ -100,57 +95,14 @@ src/components/
 | `home/` | `CareerSection.astro` | 職務経歴セクション |
 | `home/` | `ProjectsSection.astro` | 制作物セクション |
 | `home/` | `ContactSection.astro` | コンタクトセクション |
-| `blog/` | `ArticleCard.astro` | 記事カード (一覧用) |
+| `blog/` | `ArticleCard.astro` | 記事カード (一覧用・Zenn へのリンク付き) |
 | `blog/` | `TagFilter.astro` | タグフィルター |
-| `blog/` | `ArticleContent.astro` | 記事本文レンダラー |
 
 **命名規則**: PascalCase + `.astro`
 
 **依存関係**:
-- 依存可能: `src/data/`、`src/content/`
+- 依存可能: `src/data/`
 - 依存禁止: `src/pages/`（循環参照防止）
-
----
-
-### src/content/ (コンテンツディレクトリ)
-
-**役割**: Astro Content Collectionsで管理するMarkdownコンテンツ。記事ファイルとスキーマ定義を配置する。
-
-**配置ファイル**:
-- `config.ts`: コレクションのスキーマ定義
-- `articles/*.md`: 技術記事ファイル群
-
-**命名規則**:
-- 記事ファイル: `kebab-case.md` (例: `go-concurrency-tips.md`)
-- ファイル名がそのままURLスラッグになる
-
-**例**:
-```
-src/content/
-├── config.ts
-└── articles/
-    ├── go-concurrency-tips.md
-    └── postgres-index-optimization.md
-```
-
-**`config.ts` の構成**:
-```typescript
-import { defineCollection, z } from 'astro:content';
-
-const articles = defineCollection({
-  type: 'content',
-  schema: z.object({
-    title: z.string(),
-    description: z.string(),
-    publishedAt: z.date(),
-    updatedAt: z.date().optional(),
-    tags: z.array(z.string()),
-    draft: z.boolean().default(false),
-  }),
-});
-
-export const collections = { articles };
-```
 
 ---
 
@@ -238,9 +190,8 @@ public/
 | ページ | `src/pages/` | kebab-case.astro | `index.astro` |
 | レイアウト | `src/layouts/` | PascalCaseLayout.astro | `BaseLayout.astro` |
 | コンポーネント | `src/components/[category]/` | PascalCase.astro | `HeroSection.astro` |
-| 記事Markdown | `src/content/articles/` | kebab-case.md | `go-tips.md` |
 | 静的データ | `src/data/` | kebab-case.ts | `skills.ts` |
-| 型定義 | `src/types/` (必要に応じて) | PascalCase.ts | `Article.ts` |
+| 型定義 | `src/types/` (必要に応じて) | PascalCase.ts | `ZennArticle.ts` |
 | 静的画像 | `public/images/` | kebab-case.{拡張子} | `profile.jpg` |
 | 最適化画像 | `src/assets/images/` | kebab-case.{拡張子} | `project-thumb.png` |
 
@@ -278,7 +229,7 @@ pages/
   ↓ (OK)
 layouts/ + components/
   ↓ (OK)
-data/ + content/
+data/
 ```
 
 **禁止される依存**:
@@ -309,11 +260,6 @@ node_modules/
 ```
 
 ## スケーリング戦略
-
-### コンテンツ増加
-
-- 記事が50件を超えたら、`src/content/articles/` 内をカテゴリ別サブディレクトリで整理
-- 例: `articles/backend/`, `articles/infrastructure/`
 
 ### コンポーネント増加
 
