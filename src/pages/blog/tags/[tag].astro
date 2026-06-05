@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ArticleCard from '../../../components/blog/ArticleCard.astro';
+import TagFilter from '../../../components/blog/TagFilter.astro';
+import { fetchZennArticles } from '../../../lib/zenn';
+import type { ZennArticle } from '../../../lib/zenn';
+
+export async function getStaticPaths() {
+  const articles = await fetchZennArticles();
+  const allTags = [...new Set(articles.flatMap(a => a.tags))].sort();
+
+  return allTags.map(tag => ({
+    params: { tag },
+    props: {
+      articles: articles
+        .filter(a => a.tags.includes(tag))
+        .sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime()),
+      allTags,
+    },
+  }));
+}
+
+interface Props {
+  articles: ZennArticle[];
+  allTags: string[];
+}
+
+const { tag } = Astro.params;
+const { articles, allTags } = Astro.props;
+---
+
+<BaseLayout
+  title={`${tag} の記事`}
+  description={`タグ「${tag}」の技術記事一覧`}
+>
+  <section class="py-16 px-4 bg-white" aria-labelledby="blog-heading">
+    <div class="max-w-4xl mx-auto">
+      <h1
+        id="blog-heading"
+        class="text-3xl font-semibold text-gray-800 mb-4 text-center"
+      >
+        Blog
+      </h1>
+      <p class="text-sm text-gray-500 text-center mb-10">
+        タグ: <span class="font-medium text-primary">{tag}</span>
+      </p>
+
+      <div class="mb-8">
+        <TagFilter tags={allTags} currentTag={tag} />
+      </div>
+
+      {articles.length === 0 ? (
+        <p class="text-center text-gray-400 py-16">このタグの記事はありません。</p>
+      ) : (
+        <ul class="grid grid-cols-1 sm:grid-cols-2 gap-6" aria-label="記事一覧">
+          {articles.map((article, i) => (
+            <li>
+              <ArticleCard article={article} index={i} />
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </section>
+</BaseLayout>
