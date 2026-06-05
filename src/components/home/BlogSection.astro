@@ -1,0 +1,46 @@
+---
+import ArticleCard from '../blog/ArticleCard.astro';
+import { fetchZennArticles } from '../../lib/zenn';
+
+const PREVIEW_COUNT = 4;
+
+const articles = await fetchZennArticles();
+const recent = [...articles]
+  .sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime())
+  .slice(0, PREVIEW_COUNT);
+
+const base = import.meta.env.BASE_URL;
+---
+
+{recent.length > 0 && (
+  <section class="py-16 px-4 bg-gray-50" aria-labelledby="blog-section-heading">
+    <div class="max-w-4xl mx-auto">
+      <h2
+        id="blog-section-heading"
+        class="text-3xl font-semibold text-gray-800 mb-12 text-center"
+      >
+        Blog
+      </h2>
+
+      <ul class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10" aria-label="最近の記事">
+        {recent.map((article, i) => (
+          <li>
+            <ArticleCard article={article} index={i} />
+          </li>
+        ))}
+      </ul>
+
+      <div class="text-center">
+        <a
+          href={`${base}blog`}
+          class="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg border border-primary text-primary hover:bg-primary hover:text-white hover:-translate-y-0.5 hover:shadow-md transition-all text-sm font-medium"
+        >
+          すべての記事を見る
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+)}
