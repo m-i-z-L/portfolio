@@ -11,6 +11,10 @@ dist/
 .claude/
 .steering/
 
+# Nix / direnv
+.direnv/
+.envrc
+
 # OS
 .DS_Store
 
