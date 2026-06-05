@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleCard from '../../components/blog/ArticleCard.astro';
+import TagFilter from '../../components/blog/TagFilter.astro';
+import { fetchZennArticles } from '../../lib/zenn';
+
+const articles = await fetchZennArticles();
+const sorted = [...articles].sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime());
+const allTags = [...new Set(articles.flatMap(a => a.tags))].sort();
+---
+
+<BaseLayout title="Blog" description="Zenn で執筆した技術記事の一覧">
+  <section class="py-16 px-4 bg-white" aria-labelledby="blog-heading">
+    <div class="max-w-4xl mx-auto">
+      <h1
+        id="blog-heading"
+        class="text-3xl font-semibold text-gray-800 mb-4 text-center"
+      >
+        Blog
+      </h1>
+      <p class="text-sm text-gray-500 text-center mb-10">
+        Zenn で公開した技術記事
+      </p>
+
+      {allTags.length > 0 && (
+        <div class="mb-8">
+          <TagFilter tags={allTags} />
+        </div>
+      )}
+
+      {sorted.length === 0 ? (
+        <p class="text-center text-gray-400 py-16">記事が見つかりませんでした。</p>
+      ) : (
+        <ul class="grid grid-cols-1 sm:grid-cols-2 gap-6" aria-label="記事一覧">
+          {sorted.map((article, i) => (
+            <li>
+              <ArticleCard article={article} index={i} />
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </section>
+</BaseLayout>
