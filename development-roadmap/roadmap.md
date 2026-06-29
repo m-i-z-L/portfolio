@@ -1,6 +1,6 @@
 # 開発ロードマップ
 
-> 最終更新: 2026-04-30
+> 最終更新: 2026-06-29
 > ベースドキュメント: docs/product-requirements.md, docs/architecture.md
 
 ---
@@ -24,12 +24,14 @@ Astro + GitHub Pages によるゼロコスト運用で、採用担当者・エ�
 - [x] **アニメーションUI** — IntersectionObserver によるスクロールアニメーション + reduced-motion 対応 (`.steering/20260412-アニメーションUI`)
 - [x] **参画プロジェクト表示** — CareerProject インターフェース + 職歴内プロジェクトカード表示 (`.steering/20260413-職務経歴プロジェクト経験表示`)
 - [x] **GitHub Actions 基本デプロイ** — main ブランチ push で GitHub Pages へ自動デプロイ (`.github/workflows/deploy.yml`)
+- [x] **ブログ連携 (P0)** — `src/lib/zenn.ts` による Zenn RSS フェッチ、`/blog` 一覧ページ、`/blog/tags/[tag]` タグ別ページ、ArticleCard・TagFilter コンポーネント (`.steering/20260605-ブログ連携`, PR #3)
+- [x] **トップページ直近記事プレビュー** — `BlogSection.astro` でホームにZenn最新記事を表示 (PR #3)
 
 ### 未実装（残作業）
 
-- P0: 技術ブログ/Zenn RSS連携 — `/blog` および `/blog/tags/[tag]` ページ
-- P1: 制作物セクション — ProjectsSection + projects.ts
-- P1: コンタクトセクション — ContactSection（Formspree連携）
+- P1: 制作物セクション — `src/data/projects.ts` + `ProjectsSection.astro`
+- P1: コンタクトセクション — `ContactSection.astro`（Formspree連携）
+- コンテンツ: スキル・職務経歴・ヒーロー情報を実際のデータに差し替え、`src/data/profile.ts` 作成
 - インフラ: CI品質ゲート強化（型チェック・lint・Lighthouse CIをワークフローに追加）
 - インフラ: カスタム404ページ
 - P2: ダークモード対応
@@ -43,7 +45,7 @@ Astro + GitHub Pages によるゼロコスト運用で、採用担当者・エ�
 |---|--------------|---------|---------|------|
 | M1 | 基盤構築 — コアセクション実装 | プロジェクト初期化・ヒーロー・スキル・職務経歴・アニメーション | — | ✅ 完了 |
 | M2 | コンテンツ完成 — 制作物・コンタクト追加 | ProjectsSection・ContactSection・実データ入力 | サイト公開 (1ヶ月以内) | ⬜ 未着手 |
-| M3 | ブログ連携 — Zenn RSS統合 | /blog・/blog/tags/[tag]・ArticleCard・TagFilter | 技術記事公開数 (3ヶ月5記事) | ⬜ 未着手 |
+| M3 | ブログ連携 — Zenn RSS統合 | /blog・/blog/tags/[tag]・ArticleCard・TagFilter・トップ記事プレビュー | 技術記事公開数 (3ヶ月5記事) | ✅ 完了 |
 | M4 | リリース準備 — CI/CD強化と本番公開 | Lighthouse CI・型チェック/lint CI・404ページ | Lighthouse 90点以上・サイト公開 | ⬜ 未着手 |
 | M5 | Post-MVP — ダークモード・OGP対応 | ダークモード・OGP最適化 | 月間PV・SNSシェア | ⬜ 未着手 |
 
@@ -52,11 +54,11 @@ Astro + GitHub Pages によるゼロコスト運用で、採用担当者・エ�
 ## マイルストーン依存関係
 
 ```
-M1: 基盤構築（完了）
-  └── M2: コンテンツ完成
-        └── M3: ブログ連携
-              └── M4: リリース準備（本番公開）
-                    └── M5: Post-MVP
+M1: 基盤構築（✅ 完了）
+  └── M2: コンテンツ完成（⬜ 未着手 ← 次の優先タスク）
+  └── M3: ブログ連携（✅ 完了 ※ M2と並行して先行実装済み）
+        └── M4: リリース準備（M2・M3完了後）
+              └── M5: Post-MVP
 ```
 
 ---

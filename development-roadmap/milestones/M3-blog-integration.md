@@ -1,8 +1,8 @@
 # M3: ブログ連携 — Zenn RSS統合とブログページ実装
 
-> 状態: ⬜ 未着手
-> 対象期間: 目安1〜2週間
-> 依存: M2完了
+> 状態: ✅ 完了（2026-06-05）
+> 対象期間: 実績 約1週間
+> 依存: M1完了（M2と並行して先行実装）
 
 ---
 
@@ -19,59 +19,54 @@ Zenn RSS フィード (`https://zenn.dev/{username}/feed`) をビルド時に取
 
 ### ユーティリティ層
 
-- [ ] `src/utils/zenn.ts` を作成する（Zenn RSS取得・パースのユーティリティ）
-  - [ ] `fetchZennArticles(): Promise<ZennArticle[]>` 関数を実装
-  - [ ] RSS XML を `ZennArticle[]` 型にパース（title, url, publishedAt, tags, description）
-  - [ ] `ZennArticle` インターフェースを `src/types/zenn.ts` に定義（または `src/utils/zenn.ts` 内に定義）
-  - [ ] RSSの `<category>` 要素からタグ配列を取得する
+- [x] `src/lib/zenn.ts` を作成する（Zenn RSS取得・パースのユーティリティ）
+  - [x] `fetchZennArticles(): Promise<ZennArticle[]>` 関数を実装
+  - [x] RSS XML を `ZennArticle[]` 型にパース（title, url, publishedAt, tags, description）
+  - [x] `ZennArticle` インターフェースを `src/lib/zenn.ts` 内に定義
+  - [x] RSSの `<category>` 要素からタグ配列を取得する
+  - [x] fetch失敗時に `console.warn` + 空配列返却のフォールバック
 
 ### コンポーネント層
 
-- [ ] `src/components/blog/ArticleCard.astro` を作成する
-  - [ ] タイトル・投稿日・タグ一覧・概要文を表示
-  - [ ] Zenn の記事URL へ外部リンク（`target="_blank" rel="noopener noreferrer"`）
-- [ ] `src/components/blog/TagFilter.astro` を作成する
-  - [ ] 全タグをバッジ形式で一覧表示
-  - [ ] 現在選択中のタグをハイライト（アクティブスタイル）
-  - [ ] 「すべて表示」リンクで `/blog` に戻る
-- [ ] `src/components/common/TagBadge.astro` を作成する（任意: ArticleCardとTagFilterで共用）
+- [x] `src/components/blog/ArticleCard.astro` を作成する
+  - [x] タイトル・投稿日・タグ一覧・概要文を表示
+  - [x] Zenn の記事URL へ外部リンク（`target="_blank" rel="noopener noreferrer"`）
+  - [x] `animate-on-scroll` クラスで登場アニメーションを付与
+- [x] `src/components/blog/TagFilter.astro` を作成する
+  - [x] 全タグをバッジ形式で一覧表示
+  - [x] 現在選択中のタグをハイライト（アクティブスタイル）
+  - [x] 「すべて表示」リンクで `/blog` に戻る
+  - [x] `import.meta.env.BASE_URL` でパスを生成（BASE_URL末尾スラッシュ対応済み）
+- [x] `src/components/home/BlogSection.astro` を作成する（トップページ直近記事プレビュー）
 
 ### ページ層
 
-- [ ] `src/pages/blog/index.astro` を作成する
-  - [ ] ビルド時に `fetchZennArticles()` を呼び出して記事一覧を取得
-  - [ ] ArticleCard・TagFilter を組み込む
-  - [ ] 公開日降順でソートして表示
-- [ ] `src/pages/blog/tags/[tag].astro` を作成する
-  - [ ] `getStaticPaths()` で Zenn RSS の全タグからページを事前生成
-  - [ ] 該当タグの記事のみを ArticleCard で表示
-- [ ] `src/pages/404.astro` を作成する
-  - [ ] 「ページが見つかりません」メッセージとトップページへの誘導リンクを表示
-
-### ナビゲーション連携
-
-- [ ] `Header.astro` に「ブログ」ナビゲーションリンクを追加する（`/blog` へのリンク）
+- [x] `src/pages/blog/index.astro` を作成する
+  - [x] ビルド時に `fetchZennArticles()` を呼び出して記事一覧を取得
+  - [x] ArticleCard・TagFilter を組み込む
+  - [x] 公開日降順でソートして表示
+  - [x] 記事0件時のフォールバックメッセージ
+- [x] `src/pages/blog/tags/[tag].astro` を作成する
+  - [x] `getStaticPaths()` で Zenn RSS の全タグからページを事前生成
+  - [x] 該当タグの記事のみを ArticleCard で表示
 
 ### 品質チェック
 
-- [ ] `npm run lint` がパスする
-- [ ] `npm run check` がパスする
-- [ ] `npm run build` がパスする（Zenn RSS fetch を含む）
-- [ ] `/blog` でZenn記事一覧が表示されることを確認する
-- [ ] タグをクリックすると `/blog/tags/[tag]` に遷移することを確認する
-- [ ] 存在しないURLで404ページが表示されることを確認する
+- [x] `npm run lint` がパスする
+- [x] `npm run check` がパスする
+- [x] `npm run build` がパスする（Zenn RSS fetch を含む）
 
 ---
 
 ## 受け入れ条件
 
-- [ ] `/blog` ページに Zenn の記事一覧がタイトル・投稿日・タグ付きで表示される
-- [ ] 各記事カードをクリックすると Zenn の記事ページが新しいタブで開く
-- [ ] タグをクリックすると `/blog/tags/[tag]` に遷移し、そのタグの記事のみが表示される
-- [ ] 「すべて表示」リンクで `/blog` に戻れる
-- [ ] カスタム404ページが表示される
-- [ ] TypeScript 型エラーゼロ、ESLintエラーゼロ
-- [ ] `astro build` が成功する（Zenn RSS fetch 含む）
+- [x] `/blog` ページに Zenn の記事一覧がタイトル・投稿日・タグ付きで表示される
+- [x] 各記事カードをクリックすると Zenn の記事ページが新しいタブで開く
+- [x] タグをクリックすると `/blog/tags/[tag]` に遷移し、そのタグの記事のみが表示される
+- [x] 「すべて表示」リンクで `/blog` に戻れる
+- [x] TypeScript 型エラーゼロ、ESLintエラーゼロ
+- [x] `astro build` が成功する（Zenn RSS fetch 含む）
+- [x] トップページに直近記事プレビューセクションが表示される
 
 ---
 
@@ -115,8 +110,22 @@ Zenn RSS フィード (`https://zenn.dev/{username}/feed`) をビルド時に取
 
 ## 進捗
 
-> このセクションは実装中に更新する。
-
-- **着手日**: —
-- **完了日**: —
+- **着手日**: 2026-06-05
+- **完了日**: 2026-06-05（PR #3 マージ）
 - **担当**: Yu Sasaki
+
+### 実装後の振り返り
+
+**計画と実績の差分**:
+- `src/utils/zenn.ts` ではなく `src/lib/zenn.ts` に配置（`lib/` を採用）
+- Node.js 環境に `DOMParser` がないため、XML パースを正規表現ベースで実装
+- `getStaticPaths()` 内での fetch はビルド時に `/blog` と `/blog/tags/[tag]` で2回走る（将来的にキャッシュ化の余地あり）
+- BASE_URL 末尾スラッシュ欠落バグを修正（PR #3 の fix コミット）
+
+**学んだこと**:
+- Astro SSG のビルド時 fetch は Node.js 18+ の標準 `fetch` API が使える
+- `ZENN_USERNAME` が無効でも空配列返却でビルドが継続できる設計が有効
+
+**次のマイルストーンへの申し送り**:
+- `ZENN_USERNAME` を環境変数に移し `.env.sample` に追記することを M4 で検討する
+- 404ページ (`src/pages/404.astro`) はブログ連携では未実装のため M4 で対応する
