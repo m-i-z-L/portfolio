@@ -28,32 +28,24 @@ export const CATEGORY_ORDER: SkillCategory[] = [
 
 export const skills: Skill[] = [
   // Language
-  { name: 'Go', category: 'language', level: 'expert', yearsOfExperience: 5, featured: true },
-  { name: 'Python', category: 'language', level: 'proficient', yearsOfExperience: 4, featured: true },
-  { name: 'TypeScript', category: 'language', level: 'proficient', yearsOfExperience: 3, featured: true },
-  { name: 'SQL', category: 'language', level: 'proficient', yearsOfExperience: 6, featured: true },
-  { name: 'Bash', category: 'language', level: 'familiar', yearsOfExperience: 5, featured: false },
+  { name: 'PHP', category: 'language', level: 'expert', yearsOfExperience: 7, featured: true },
+  { name: 'SQL', category: 'language', level: 'proficient', yearsOfExperience: 7, featured: true },
+  { name: 'Python', category: 'language', level: 'familiar', yearsOfExperience: 2, featured: false },
 
   // Framework
-  { name: 'Echo', category: 'framework', level: 'expert', yearsOfExperience: 4, featured: true },
-  { name: 'FastAPI', category: 'framework', level: 'proficient', yearsOfExperience: 2, featured: true },
-  { name: 'Astro', category: 'framework', level: 'familiar', yearsOfExperience: 1, featured: false },
+  { name: 'Laravel', category: 'framework', level: 'expert', yearsOfExperience: 7, featured: true },
 
   // Database
-  { name: 'PostgreSQL', category: 'database', level: 'expert', yearsOfExperience: 6, featured: true },
-  { name: 'MySQL', category: 'database', level: 'proficient', yearsOfExperience: 4, featured: true },
-  { name: 'Redis', category: 'database', level: 'proficient', yearsOfExperience: 3, featured: true },
-  { name: 'BigQuery', category: 'database', level: 'familiar', yearsOfExperience: 2, featured: false },
+  { name: 'MySQL', category: 'database', level: 'expert', yearsOfExperience: 7, featured: true },
+  { name: 'Redis', category: 'database', level: 'proficient', yearsOfExperience: 5, featured: true },
+  { name: 'OpenSearch', category: 'database', level: 'familiar', yearsOfExperience: 2, featured: false },
 
   // Infrastructure
-  { name: 'Docker', category: 'infrastructure', level: 'expert', yearsOfExperience: 5, featured: true },
-  { name: 'Kubernetes', category: 'infrastructure', level: 'proficient', yearsOfExperience: 3, featured: true },
-  { name: 'AWS', category: 'infrastructure', level: 'proficient', yearsOfExperience: 4, featured: true },
-  { name: 'GCP', category: 'infrastructure', level: 'familiar', yearsOfExperience: 2, featured: false },
-  { name: 'GitHub Actions', category: 'infrastructure', level: 'proficient', yearsOfExperience: 3, featured: false },
+  { name: 'AWS', category: 'infrastructure', level: 'proficient', yearsOfExperience: 5, featured: true },
+  { name: 'GitLab CI/CD', category: 'infrastructure', level: 'proficient', yearsOfExperience: 5, featured: false },
 
   // Tool
   { name: 'Git', category: 'tool', level: 'expert', yearsOfExperience: 7, featured: false },
-  { name: 'gRPC', category: 'tool', level: 'proficient', yearsOfExperience: 3, featured: true },
-  { name: 'OpenAPI', category: 'tool', level: 'proficient', yearsOfExperience: 3, featured: false },
+  { name: 'PHPUnit', category: 'tool', level: 'proficient', yearsOfExperience: 5, featured: true },
+  { name: 'Pest', category: 'tool', level: 'familiar', yearsOfExperience: 1, featured: false },
 ];

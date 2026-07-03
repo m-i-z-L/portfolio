@@ -1,6 +1,6 @@
 # 開発ロードマップ
 
-> 最終更新: 2026-06-29
+> 最終更新: 2026-07-02
 > ベースドキュメント: docs/product-requirements.md, docs/architecture.md
 
 ---
@@ -23,6 +23,7 @@ Astro + GitHub Pages によるゼロコスト運用で、採用担当者・エ�
 - [x] **職務経歴セクション** — career.ts データ + タイムライン表示 (`.steering/20260412-職務経歴セクション`)
 - [x] **アニメーションUI** — IntersectionObserver によるスクロールアニメーション + reduced-motion 対応 (`.steering/20260412-アニメーションUI`)
 - [x] **参画プロジェクト表示** — CareerProject インターフェース + 職歴内プロジェクトカード表示 (`.steering/20260413-職務経歴プロジェクト経験表示`)
+- [x] **実データ反映** — skills.ts・career.ts を職務経歴書ベースの実データに差し替え (`.steering/20260702-スキルセクションとプロジェクトセクションへの実データ反映`)
 - [x] **GitHub Actions 基本デプロイ** — main ブランチ push で GitHub Pages へ自動デプロイ (`.github/workflows/deploy.yml`)
 - [x] **ブログ連携 (P0)** — `src/lib/zenn.ts` による Zenn RSS フェッチ、`/blog` 一覧ページ、`/blog/tags/[tag]` タグ別ページ、ArticleCard・TagFilter コンポーネント (`.steering/20260605-ブログ連携`, PR #3)
 - [x] **トップページ直近記事プレビュー** — `BlogSection.astro` でホームにZenn最新記事を表示 (PR #3)
@@ -31,7 +32,7 @@ Astro + GitHub Pages によるゼロコスト運用で、採用担当者・エ�
 
 - P1: 制作物セクション — `src/data/projects.ts` + `ProjectsSection.astro`
 - P1: コンタクトセクション — `ContactSection.astro`（Formspree連携）
-- コンテンツ: スキル・職務経歴・ヒーロー情報を実際のデータに差し替え、`src/data/profile.ts` 作成
+- コンテンツ: ヒーロー情報を実際のデータに差し替え・`src/data/profile.ts` 作成
 - インフラ: CI品質ゲート強化（型チェック・lint・Lighthouse CIをワークフローに追加）
 - インフラ: カスタム404ページ
 - P2: ダークモード対応
