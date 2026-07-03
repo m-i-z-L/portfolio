@@ -38,7 +38,7 @@ export const career: CareerHistory[] = [
     startDate: '2019-04',
     endDate: '2026-03',
     description:
-      '店舗情報プラットフォームのバックエンド開発を担当。DDD/クリーンアーキテクチャを用いたフルリニューアルから収益直結の機能・外部API基盤の開発まで幅広く経験。後半はバックエンド主担当として仕様調整や推進面も担った。',
+      '店舗情報プラットフォームのバックエンド開発を担当。DDD/クリーンアーキテクチャを用いたフルリニューアルから収益直結の機能・外部API基盤の開発まで幅広く経験。',
     achievements: [],
     technologies: ['PHP', 'Laravel', 'Python', 'MySQL', 'Redis', 'OpenSearch', 'AWS', 'GitLab CI/CD'],
     projects: [
@@ -53,7 +53,7 @@ export const career: CareerHistory[] = [
       {
         name: '店舗公式HP作成機能の開発',
         description:
-          '店舗情報をもとに独自ドメイン対応の公式HPを自動作成・更新機能の開発を担当。ドメイン設定からクラウドリソースの自動プロビジョニングをはじめとしたライフサイクルの設計・実装を担った。',
+          '店舗情報をもとに独自ドメイン対応の公式HPを自動作成・更新を行う機能の開発を担当。ドメイン設定からクラウドリソースの自動プロビジョニングをはじめとしたライフサイクルの設計・実装を担った。',
         role: 'バックエンド',
         technologies: ['PHP', 'Laravel', 'AWS', 'AWS SDK for PHP'],
         achievements: [],
