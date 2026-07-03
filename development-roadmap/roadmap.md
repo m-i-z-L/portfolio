@@ -1,6 +1,6 @@
 # 開発ロードマップ
 
-> 最終更新: 2026-07-02
+> 最終更新: 2026-07-03
 > ベースドキュメント: docs/product-requirements.md, docs/architecture.md
 
 ---
@@ -32,7 +32,7 @@ Astro + GitHub Pages によるゼロコスト運用で、採用担当者・エ�
 
 - P1: 制作物セクション — `src/data/projects.ts` + `ProjectsSection.astro`
 - P1: コンタクトセクション — `ContactSection.astro`（Formspree連携）
-- コンテンツ: ヒーロー情報を実際のデータに差し替え・`src/data/profile.ts` 作成
+- コンテンツ: ヒーロー情報を実際のデータに差し替え・`src/data/profile.ts` 作成（任意）
 - インフラ: CI品質ゲート強化（型チェック・lint・Lighthouse CIをワークフローに追加）
 - インフラ: カスタム404ページ
 - P2: ダークモード対応
@@ -45,7 +45,7 @@ Astro + GitHub Pages によるゼロコスト運用で、採用担当者・エ�
 | # | マイルストーン | 主な機能 | KPI貢献 | 状態 |
 |---|--------------|---------|---------|------|
 | M1 | 基盤構築 — コアセクション実装 | プロジェクト初期化・ヒーロー・スキル・職務経歴・アニメーション | — | ✅ 完了 |
-| M2 | コンテンツ完成 — 制作物・コンタクト追加 | ProjectsSection・ContactSection・実データ入力 | サイト公開 (1ヶ月以内) | ⬜ 未着手 |
+| M2 | コンテンツ完成 — 制作物・コンタクト追加 | ProjectsSection・ContactSection・実データ入力 | サイト公開 (1ヶ月以内) | 🚧 進行中 |
 | M3 | ブログ連携 — Zenn RSS統合 | /blog・/blog/tags/[tag]・ArticleCard・TagFilter・トップ記事プレビュー | 技術記事公開数 (3ヶ月5記事) | ✅ 完了 |
 | M4 | リリース準備 — CI/CD強化と本番公開 | Lighthouse CI・型チェック/lint CI・404ページ | Lighthouse 90点以上・サイト公開 | ⬜ 未着手 |
 | M5 | Post-MVP — ダークモード・OGP対応 | ダークモード・OGP最適化 | 月間PV・SNSシェア | ⬜ 未着手 |
